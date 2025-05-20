@@ -42,7 +42,7 @@ public class JWTAuthenticatorFilter extends UsernamePasswordAuthenticationFilter
             Authentication authentication = this.authenticatorManager.authenticate(authToken); 
             return authentication;               
         } catch (Exception e) {
-            throw new RuntimeException("Failed to authenticate user", e);
+            throw new RuntimeException(e);
         }
     }
 
