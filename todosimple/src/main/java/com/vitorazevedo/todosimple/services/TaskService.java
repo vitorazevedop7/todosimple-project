@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.vitorazevedo.todosimple.models.Task;
 import com.vitorazevedo.todosimple.models.User;
 import com.vitorazevedo.todosimple.models.enums.ProfileEnum;
+import com.vitorazevedo.todosimple.models.projection.TaskProjection;
 import com.vitorazevedo.todosimple.repositories.TaskRepository;
 import com.vitorazevedo.todosimple.security.UserSpringSecurity;
 import com.vitorazevedo.todosimple.services.exceptions.DataBindingViolationException;
@@ -38,12 +39,12 @@ public class TaskService {
         return task;                    
     }
 
-    public List<Task> findAllByUser() {
+    public List<TaskProjection> findAllByUser() {
         UserSpringSecurity userSpringSecurity = UserService.authenticated();
         if (Objects.isNull(userSpringSecurity)) {
             throw new ObjectNotFoundException("Acesso negado");
         }
-        List<Task> tasks = this.taskRepository.findByUser_Id(userSpringSecurity.getId());
+        List<TaskProjection> tasks = this.taskRepository.findByUser_Id(userSpringSecurity.getId());
         return tasks;
     }
     

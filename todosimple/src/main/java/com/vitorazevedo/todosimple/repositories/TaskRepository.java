@@ -8,12 +8,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.vitorazevedo.todosimple.models.Task;
+import com.vitorazevedo.todosimple.models.projection.TaskProjection;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
    
     // Repository pra Task pelo Spring 
-    List<Task> findByUser_Id(Long userId);
+    List<TaskProjection> findByUser_Id(Long userId);
 
     // Repository pra Task pelo Query
     // @Query(value = "SELECT t FROM Task t WHERE t.user.id = :id")
