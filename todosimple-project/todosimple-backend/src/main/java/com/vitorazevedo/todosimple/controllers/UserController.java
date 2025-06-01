@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.vitorazevedo.todosimple.models.User;
 import com.vitorazevedo.todosimple.models.dto.UserCreateDTO;
 import com.vitorazevedo.todosimple.models.dto.UserUpdateDTO;
+import com.vitorazevedo.todosimple.security.UserSpringSecurity;
 import com.vitorazevedo.todosimple.services.UserService;
-
 
 @RestController
 @RequestMapping("/user")
@@ -32,10 +32,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> findById(@PathVariable Long id){
+    public ResponseEntity<User> findById(@PathVariable Long id) {
         User obj = this.userService.findById(id);
         return ResponseEntity.ok().body(obj);
-    } 
+    }
 
     @PostMapping
     public ResponseEntity<Void> create(@Valid @RequestBody UserCreateDTO obj) {
@@ -55,9 +55,15 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         this.userService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping("/me")
+    public ResponseEntity<User> getLoggedUser() {
+        UserSpringSecurity userSS = UserService.authenticated();
+        User user = userService.findById(userSS.getId());
+        return ResponseEntity.ok().body(user);
+    }
 }

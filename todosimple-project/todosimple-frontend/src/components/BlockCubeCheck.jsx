@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 
-// Paleta verde variada (pode ajustar ao seu gosto)
 const greenVariants = [
   "bg-green-600",
   "bg-green-700",
@@ -12,20 +11,28 @@ const greenVariants = [
   "bg-lime-600",
 ];
 
-export default function BlockCubeCheck({ index = 0 }) {
+export default function BlockCubeCheck({ index = 0, autoRotate = false }) {
   const [rotated, setRotated] = useState(false);
   const [color, setColor] = useState("bg-green-700");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Escolhe uma cor aleatória ao montar
     const randomColor = greenVariants[Math.floor(Math.random() * greenVariants.length)];
     setColor(randomColor);
 
-    // Delay de entrada para animação sequencial
     const timeout = setTimeout(() => setMounted(true), index * 100);
     return () => clearTimeout(timeout);
   }, [index]);
+
+  useEffect(() => {
+    if (!autoRotate) return;
+
+    const interval = setInterval(() => {
+      setRotated((prev) => !prev);
+    }, 2000 + Math.random() * 2000); // gira a cada 2–4s
+
+    return () => clearInterval(interval);
+  }, [autoRotate]);
 
   return (
     <div

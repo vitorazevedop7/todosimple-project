@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import api from "@/services/api";
 import BlockCubeCheck from "@/components/BlockCubeCheck";
 
@@ -15,7 +16,6 @@ export default function LoginPage() {
       const response = await api.post("/login", { username, password });
       const token = response.headers["authorization"];
       if (token) {
-        // Garante que o token esteja corretamente formatado
         const cleanToken = token.replace("Bearer ", "");
         localStorage.setItem("token", `Bearer ${cleanToken}`);
         router.push("/dashboard");
@@ -31,13 +31,23 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f2414] to-[#1d5a2f] flex items-center justify-center px-4">
       <div className="w-full max-w-md text-white">
+        {/* Cubos com rotação automática */}
         <div className="flex justify-center mb-6 flex-wrap">
           {[...Array(5)].map((_, i) => (
-            <BlockCubeCheck key={i} index={i} />
+            <BlockCubeCheck key={i} index={i} autoRotate />
           ))}
         </div>
 
-        <h1 className="text-4xl font-bold text-center mb-10">ToDo</h1>
+        {/* Logo da aplicação */}
+        <div className="flex justify-center mb-10">
+          <Image
+            src="/assets/logo.png"
+            alt="ToDo.ai Logo"
+            width={200}
+            height={60}
+            priority
+          />
+        </div>
 
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
