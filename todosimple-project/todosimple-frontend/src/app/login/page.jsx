@@ -78,9 +78,16 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-green-200 hover:underline cursor-pointer">
-          Forgot password?
-        </p>
+        <div className="mt-6 flex justify-center">
+          <p
+            onClick={() => router.push("/register")}
+            className="text-sm text-green-200 hover:underline cursor-pointer"
+          >
+            Create New Account
+          </p>
+        </div>
+
+
       </div>
     </div>
   );
