@@ -6,12 +6,14 @@ export default function TaskFormModal({ isOpen, onClose, onSuccess, editingTask 
   const [description, setDescription] = useState("");
 
   useEffect(() => {
-    if (editingTask) {
-      setDescription(editingTask.description);
-    } else {
-      setDescription("");
+    if (isOpen) {
+      if (editingTask) {
+        setDescription(editingTask.description);
+      } else {
+        setDescription(""); // limpa ao abrir para nova tarefa
+      }
     }
-  }, [editingTask]);
+  }, [isOpen, editingTask]); // dependências declaradas corretamente
 
   const handleSubmit = async (e) => {
     e.preventDefault();
