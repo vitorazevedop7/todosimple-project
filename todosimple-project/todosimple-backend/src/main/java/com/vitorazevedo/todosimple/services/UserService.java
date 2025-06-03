@@ -35,7 +35,7 @@ public class UserService {
     public User findById(Long id) {
         UserSpringSecurity userSpringSecurity = authenticated();
         if(!Objects.nonNull(userSpringSecurity) || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !id.equals(userSpringSecurity.getId())) {
-            throw new AuthorizationException("Accsess denied!");
+            throw new AuthorizationException("Access denied!");
         }
 
         Optional<User> user = this.userRepository.findById(id);

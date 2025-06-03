@@ -16,7 +16,6 @@ export default function RegisterPage() {
       await api.post("/user", {
         username,
         password,
-        user_profile: "1", 
       });
       alert("Usuário criado com sucesso!");
       router.push("/login");
