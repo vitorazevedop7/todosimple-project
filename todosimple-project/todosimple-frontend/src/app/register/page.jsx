@@ -16,7 +16,7 @@ export default function RegisterPage() {
       await api.post("/user", {
         username,
         password,
-        user_profile: "1", // Sempre cria com perfil de usuário comum
+        user_profile: "1", 
       });
       alert("Usuário criado com sucesso!");
       router.push("/login");
@@ -52,14 +52,14 @@ export default function RegisterPage() {
           <form onSubmit={handleRegister} className="space-y-4">
             <input
               type="text"
-              placeholder="Usuário"
+              placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-transparent border border-green-300 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <input
               type="password"
-              placeholder="Senha"
+              placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-lg bg-transparent border border-green-300 text-white placeholder-green-300 focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -68,7 +68,7 @@ export default function RegisterPage() {
               type="submit"
               className="w-full py-3 bg-green-400 text-white font-semibold rounded-lg hover:bg-green-300 transition"
             >
-              Cadastrar
+              Sign up
             </button>
           </form>
           <p

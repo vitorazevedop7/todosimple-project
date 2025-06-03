@@ -86,7 +86,7 @@ export default function DashboardPage() {
             onClick={() => setShowModal(true)}
             className="bg-green-300 text-green-900 px-6 py-2 rounded-xl font-semibold hover:bg-green-200 transition w-full sm:w-auto"
           >
-            Nova Tarefa +
+            New Task +
           </button>
         </header>
 

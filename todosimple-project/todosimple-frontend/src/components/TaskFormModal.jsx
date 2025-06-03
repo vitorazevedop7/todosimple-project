@@ -39,7 +39,7 @@ export default function TaskFormModal({ isOpen, onClose, onSuccess, editingTask 
     >
       <div className="w-full max-w-sm sm:max-w-md bg-white/5 backdrop-blur-lg text-white rounded-xl p-5 sm:p-6 border border-green-400 shadow-2xl">
         <h2 className="text-xl sm:text-2xl font-bold mb-4 text-center">
-          {editingTask ? "Editar Tarefa" : "Nova Tarefa"}
+          {editingTask ? "Edit Task" : "New Task"}
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -57,13 +57,13 @@ export default function TaskFormModal({ isOpen, onClose, onSuccess, editingTask 
               onClick={onClose}
               className="px-4 py-2 rounded-lg bg-white text-green-900 hover:bg-green-100 transition w-full sm:w-auto"
             >
-              Cancelar
+              Cancel
             </button>
             <button
               type="submit"
               className="px-4 py-2 rounded-lg bg-green-400 text-white font-semibold hover:bg-green-300 transition w-full sm:w-auto"
             >
-              Salvar
+              Save
             </button>
           </div>
         </form>
