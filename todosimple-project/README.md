@@ -1,3 +1,10 @@
+![image](https://github.com/user-attachments/assets/f01174cf-80f8-47c4-bbe7-1b3b36aee7ab)
+![image](https://github.com/user-attachments/assets/fb06f860-f047-45e5-a00c-8281c291c681)
+![image](https://github.com/user-attachments/assets/abb41031-0f90-411a-bb7f-b4c4c3b42c84)
+![image](https://github.com/user-attachments/assets/8d5771c5-54f9-4450-ba0e-4baab73209e7)
+
+
+
 # ToDoSimple 📝
 
 ToDoSimple is a full-stack task management application built as a practical and academic project. It was developed by a Software Engineering student aiming to demonstrate technical and architectural skills, and to showcase readiness for international junior developer opportunities.
