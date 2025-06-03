@@ -105,7 +105,7 @@ export default function DashboardPage() {
               {tasks.map((task) => (
                 <li
                   key={task.id}
-                  className="bg-white/5 border border-green-400 p-4 rounded-lg flex items-center justify-between gap-4 transition-all hover:scale-[1.015] hover:bg-white/10 hover:border-green-300"
+                  className="bg-white/5 border border-green-400 p-4 rounded-lg flex flex-wrap sm:flex-nowrap items-start justify-between gap-4 transition-all hover:scale-[1.015] hover:bg-white/10 hover:border-green-300"
                 >
                   <div className="flex items-start gap-2 flex-1 min-w-0">
                     <CheckTaskCube
@@ -117,7 +117,7 @@ export default function DashboardPage() {
                       onClick={() => setEditingTask(task)}
                     >
                       <h3
-                        className={`text-base sm:text-lg font-semibold max-w-[230px] sm:max-w-md break-words ${
+                        className={`text-base sm:text-lg font-semibold break-words max-w-full sm:max-w-md ${
                           task.done ? "italic line-through text-green-300" : ""
                         }`}
                       >
@@ -126,7 +126,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 ml-auto">
                     <button
                       onClick={() => setEditingTask(task)}
                       className="p-2 rounded-full text-green-200 hover:text-yellow-300 hover:bg-white/10 active:scale-90 transition-all"

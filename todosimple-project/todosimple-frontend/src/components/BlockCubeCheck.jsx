@@ -38,15 +38,17 @@ export default function BlockCubeCheck({ index = 0, autoRotate = false }) {
     <div
       onClick={() => setRotated(!rotated)}
       className={`
-        w-12 h-12 m-2 rounded-md cursor-pointer transition-transform duration-700 transform relative flex items-center justify-center
+        w-10 h-10 sm:w-12 sm:h-12 m-1 rounded-md cursor-pointer
+        transition-transform duration-700 transform relative flex items-center justify-center
         ${color}
         ${rotated ? "rotate-[180deg] scale-105 shadow-lg" : ""}
         ${mounted ? "opacity-100 scale-100" : "opacity-0 scale-50"}
         transition-all duration-500 ease-out
+        shrink-0
       `}
     >
       <span
-        className={`text-white text-xl font-bold transition-opacity duration-500 transform ${
+        className={`text-white text-lg sm:text-xl font-bold transition-opacity duration-500 transform ${
           rotated ? "opacity-100 rotate-[-180deg]" : "opacity-0"
         }`}
       >

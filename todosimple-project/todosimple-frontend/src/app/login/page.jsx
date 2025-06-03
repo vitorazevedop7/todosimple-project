@@ -31,14 +31,14 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0f2414] to-[#1d5a2f] flex items-center justify-center px-4">
       <div className="w-full max-w-md text-white">
-        {/* Cubos com rotação automática */}
+        {/* Cubos decorativos com rotação automática */}
         <div className="flex justify-center mb-6 flex-wrap">
           {[...Array(5)].map((_, i) => (
             <BlockCubeCheck key={i} index={i} autoRotate />
           ))}
         </div>
 
-        {/* Logo da aplicação */}
+        {/* Logo */}
         <div className="flex justify-center mb-10">
           <Image
             src="/assets/logo.png"
@@ -49,6 +49,7 @@ export default function LoginPage() {
           />
         </div>
 
+        {/* Formulário de login */}
         <form className="space-y-6" onSubmit={handleLogin}>
           <div>
             <label className="block mb-1 text-sm">Username</label>
@@ -78,6 +79,7 @@ export default function LoginPage() {
           </button>
         </form>
 
+        {/* Link para registro */}
         <div className="mt-6 flex justify-center">
           <p
             onClick={() => router.push("/register")}
@@ -86,8 +88,6 @@ export default function LoginPage() {
             Create New Account
           </p>
         </div>
-
-
       </div>
     </div>
   );

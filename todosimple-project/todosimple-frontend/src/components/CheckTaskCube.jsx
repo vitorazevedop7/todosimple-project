@@ -27,16 +27,17 @@ export default function CheckTaskCube({ checked, onToggle }) {
   return (
     <div
       onClick={onToggle}
-      className={`w-8 h-8 mr-3 rounded-md cursor-pointer transition-transform duration-700 transform relative flex items-center justify-center
-        ${color}
-        ${rotated ? "rotate-[180deg] scale-105 shadow-lg" : ""}
-        opacity-100 scale-100 transition-all duration-500 ease-out`}
+      className={`min-w-[2rem] min-h-[2rem] max-w-[2rem] max-h-[2rem]
+        rounded-md cursor-pointer flex items-center justify-center
+        transition-transform duration-700 transform
+        ${color} ${rotated ? "rotate-[180deg] scale-105 shadow-lg" : ""}
+        mr-2 sm:mr-3`}
     >
       <span
         className={`text-white text-sm font-bold transition-opacity duration-500 transform
-          ${rotated ? "opacity-100 rotate-[-180deg]" : "opacity-0"} 
-          not-italic no-underline !line-through-none`}
-        style={{ textDecoration: "none" }} // força sem line-through
+          ${rotated ? "opacity-100 rotate-[-180deg]" : "opacity-0"}
+          not-italic no-underline`}
+        style={{ textDecoration: "none", fontStyle: "normal" }}
       >
         ✓
       </span>
