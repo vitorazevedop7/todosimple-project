@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -21,6 +22,8 @@ import com.vitorazevedo.todosimple.models.enums.ProfileEnum;
 import com.vitorazevedo.todosimple.repositories.UserRepository;
 import com.vitorazevedo.todosimple.services.exceptions.DataBindingViolationException;
 import com.vitorazevedo.todosimple.services.exceptions.ObjectNotFoundException;
+import com.vitorazevedo.todosimple.services.exceptions.AuthorizationException;
+import com.vitorazevedo.todosimple.security.UserSpringSecurity;
 
 @ExtendWith(MockitoExtension.class)
 public class UserServiceTest {
@@ -100,5 +103,31 @@ public class UserServiceTest {
         User user = userService.fromDTO(dto);
         assertEquals(5L, user.getId());
         assertEquals("secret", user.getPassword());
+    }
+
+    @Test
+    void findByIdWithoutAuthorizationThrowsException() {
+        Set<ProfileEnum> profiles = new HashSet<>();
+        profiles.add(ProfileEnum.USER);
+        UserSpringSecurity userSS = new UserSpringSecurity(2L, "jane", "pass", profiles);
+
+        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
+            mocked.when(UserService::authenticated).thenReturn(userSS);
+            assertThrows(AuthorizationException.class, () -> userService.findById(1L));
+        }
+    }
+
+    @Test
+    void findByIdWhenUserNotFoundThrowsException() {
+        Set<ProfileEnum> profiles = new HashSet<>();
+        profiles.add(ProfileEnum.USER);
+        UserSpringSecurity userSS = new UserSpringSecurity(1L, "john", "pass", profiles);
+
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
+            mocked.when(UserService::authenticated).thenReturn(userSS);
+            assertThrows(ObjectNotFoundException.class, () -> userService.findById(1L));
+        }
     }
 }
