@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vitorazevedo.todosimple.models.Task;
+import com.vitorazevedo.todosimple.models.projection.TaskProjection;
 import com.vitorazevedo.todosimple.services.TaskService;
 
 @WebMvcTest(TaskController.class)
@@ -45,5 +46,52 @@ public class TaskControllerTest {
                 .content(mapper.writeValueAsString(task)))
             .andExpect(status().isCreated())
             .andExpect(header().string("Location", "http://localhost/task/4"));
+    }
+
+    @Test
+    void getTaskByIdReturnsTask() throws Exception {
+        Task task = new Task();
+        task.setId(1L);
+        task.setDescription("task 1");
+        when(taskService.findById(1L)).thenReturn(task);
+
+        mockMvc.perform(get("/task/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.description").value("task 1"));
+    }
+
+    @Test
+    void getTasksByUserReturnsList() throws Exception {
+        TaskProjection proj = new TaskProjection() {
+            public Long getId() { return 2L; }
+            public String getDescription() { return "task 2"; }
+        };
+        when(taskService.findAllByUser()).thenReturn(java.util.List.of(proj));
+
+        mockMvc.perform(get("/task/user"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id").value(2))
+            .andExpect(jsonPath("$[0].description").value("task 2"));
+    }
+
+    @Test
+    void updateTaskReturnsNoContent() throws Exception {
+        Task task = new Task();
+        task.setDescription("updated");
+        doNothing().when(taskService).update(any(Task.class));
+
+        mockMvc.perform(put("/task/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(task)))
+            .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteTaskReturnsNoContent() throws Exception {
+        doNothing().when(taskService).delete(1L);
+
+        mockMvc.perform(delete("/task/1"))
+            .andExpect(status().isNoContent());
     }
 }
