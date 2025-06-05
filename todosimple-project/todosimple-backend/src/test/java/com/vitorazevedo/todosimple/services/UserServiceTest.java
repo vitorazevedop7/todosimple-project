@@ -92,6 +92,11 @@ public class UserServiceTest {
         doThrow(new RuntimeException("constraint"))
             .when(userRepository).deleteById(2L);
 
+        Set<ProfileEnum> profiles = new HashSet<>();
+        profiles.add(ProfileEnum.USER);
+        UserSpringSecurity userSS = new UserSpringSecurity(2L, "john", "pass", profiles);
+        authenticate(userSS);
+
         assertThrows(DataBindingViolationException.class, () -> userService.delete(2L));
     }
 
