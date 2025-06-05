@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.vitorazevedo.todosimple.models.User;
@@ -36,6 +37,12 @@ public class UserServiceTest {
 
     @InjectMocks
     private UserService userService;
+
+    private void authenticate(UserSpringSecurity user) {
+        UsernamePasswordAuthenticationToken auth =
+            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
 
     @Test
     void createEncodesPasswordAndAddsUserProfile() {
@@ -110,11 +117,8 @@ public class UserServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(2L, "jane", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            assertThrows(AuthorizationException.class, () -> userService.findById(1L));
-        }
+        authenticate(userSS);
+        assertThrows(AuthorizationException.class, () -> userService.findById(1L));
     }
 
     @Test
@@ -125,9 +129,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            assertThrows(ObjectNotFoundException.class, () -> userService.findById(1L));
-        }
+        authenticate(userSS);
+        assertThrows(ObjectNotFoundException.class, () -> userService.findById(1L));
     }
 }

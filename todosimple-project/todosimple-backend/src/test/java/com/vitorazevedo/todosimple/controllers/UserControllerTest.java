@@ -13,6 +13,7 @@ import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,9 +25,11 @@ import com.vitorazevedo.todosimple.models.dto.UserUpdateDTO;
 import com.vitorazevedo.todosimple.models.enums.ProfileEnum;
 import com.vitorazevedo.todosimple.security.UserSpringSecurity;
 import com.vitorazevedo.todosimple.services.UserService;
+import com.vitorazevedo.todosimple.configs.TestSecurityConfig;
 
 @WebMvcTest(UserController.class)
 @ExtendWith(SpringExtension.class)
+@Import(TestSecurityConfig.class)
 public class UserControllerTest {
 
     @Autowired
@@ -101,7 +104,7 @@ public class UserControllerTest {
         user.setId(1L);
         user.setPassword("newpass");
         when(userService.fromDTO(any(UserUpdateDTO.class))).thenReturn(user);
-        doNothing().when(userService).update(any(User.class));
+        when(userService.update(any(User.class))).thenReturn(user);
 
         mockMvc.perform(put("/user/1")
                 .contentType(MediaType.APPLICATION_JSON)

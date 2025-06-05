@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,9 +18,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vitorazevedo.todosimple.models.Task;
 import com.vitorazevedo.todosimple.models.projection.TaskProjection;
 import com.vitorazevedo.todosimple.services.TaskService;
+import com.vitorazevedo.todosimple.configs.TestSecurityConfig;
 
 @WebMvcTest(TaskController.class)
 @ExtendWith(SpringExtension.class)
+@Import(TestSecurityConfig.class)
 public class TaskControllerTest {
 
     @Autowired
@@ -79,7 +82,7 @@ public class TaskControllerTest {
     void updateTaskReturnsNoContent() throws Exception {
         Task task = new Task();
         task.setDescription("updated");
-        doNothing().when(taskService).update(any(Task.class));
+        when(taskService.update(any(Task.class))).thenReturn(task);
 
         mockMvc.perform(put("/task/1")
                 .contentType(MediaType.APPLICATION_JSON)
