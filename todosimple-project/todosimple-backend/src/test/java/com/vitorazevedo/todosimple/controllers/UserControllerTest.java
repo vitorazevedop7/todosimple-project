@@ -99,10 +99,10 @@ public class UserControllerTest {
     @Test
     void updateUserReturnsNoContent() throws Exception {
         UserUpdateDTO dto = new UserUpdateDTO();
-        dto.setPassword("newpass");
+        dto.setPassword("newpassword");
         User user = new User();
         user.setId(1L);
-        user.setPassword("newpass");
+        user.setPassword("newpassword");
         when(userService.fromDTO(any(UserUpdateDTO.class))).thenReturn(user);
         when(userService.update(any(User.class))).thenReturn(user);
 

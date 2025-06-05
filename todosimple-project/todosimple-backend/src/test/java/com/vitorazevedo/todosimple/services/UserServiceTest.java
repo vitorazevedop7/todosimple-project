@@ -70,6 +70,11 @@ public class UserServiceTest {
         when(passwordEncoder.encode("new")).thenReturn("encodedNew");
         when(userRepository.save(any(User.class))).thenAnswer(i -> i.getArgument(0));
 
+        Set<ProfileEnum> profiles = new HashSet<>();
+        profiles.add(ProfileEnum.USER);
+        UserSpringSecurity userSS = new UserSpringSecurity(1L, "john", "pass", profiles);
+        authenticate(userSS);
+
         User update = new User();
         update.setId(1L);
         update.setPassword("new");
