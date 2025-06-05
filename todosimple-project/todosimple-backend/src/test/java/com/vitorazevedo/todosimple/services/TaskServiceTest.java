@@ -11,8 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.vitorazevedo.todosimple.models.Task;
 import com.vitorazevedo.todosimple.models.User;
@@ -35,6 +36,12 @@ public class TaskServiceTest {
     @InjectMocks
     private TaskService taskService;
 
+    private void authenticate(UserSpringSecurity user) {
+        UsernamePasswordAuthenticationToken auth =
+            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(auth);
+    }
+
     @Test
     void findByIdWithOwnerUserReturnsTask() {
         User owner = new User();
@@ -50,13 +57,10 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(1L, "john", "pass", profiles);
+        authenticate(userSS);
 
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-
-            Task result = taskService.findById(1L);
-            assertEquals(task, result);
-        }
+        Task result = taskService.findById(1L);
+        assertEquals(task, result);
     }
 
     @Test
@@ -74,12 +78,9 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(2L, "jane", "pass", profiles);
+        authenticate(userSS);
 
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-
-            assertThrows(ObjectNotFoundException.class, () -> taskService.findById(1L));
-        }
+        assertThrows(ObjectNotFoundException.class, () -> taskService.findById(1L));
 }
 
     @Test
@@ -100,22 +101,17 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(3L, "john", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            Task created = taskService.create(task);
-            assertEquals(10L, created.getId());
-            assertEquals(user, created.getUser());
-        }
+        authenticate(userSS);
+        Task created = taskService.create(task);
+        assertEquals(10L, created.getId());
+        assertEquals(user, created.getUser());
     }
 
     @Test
     void createWithoutAuthenticationThrows() {
         Task task = new Task();
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(null);
-            assertThrows(ObjectNotFoundException.class, () -> taskService.create(task));
-        }
+        SecurityContextHolder.clearContext();
+        assertThrows(ObjectNotFoundException.class, () -> taskService.create(task));
     }
 
     @Test
@@ -131,11 +127,8 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(5L, "john", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            assertThrows(DataBindingViolationException.class, () -> taskService.delete(5L));
-        }
+        authenticate(userSS);
+        assertThrows(DataBindingViolationException.class, () -> taskService.delete(5L));
     }
 
     @Test
@@ -154,21 +147,16 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(1L, "john", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            var result = taskService.findAllByUser();
-            assertEquals(1, result.size());
-            assertEquals(projection, result.get(0));
-        }
+        authenticate(userSS);
+        var result = taskService.findAllByUser();
+        assertEquals(1, result.size());
+        assertEquals(projection, result.get(0));
     }
 
     @Test
     void findAllByUserWithoutAuthenticationThrows() {
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(null);
-            assertThrows(ObjectNotFoundException.class, () -> taskService.findAllByUser());
-        }
+        SecurityContextHolder.clearContext();
+        assertThrows(ObjectNotFoundException.class, () -> taskService.findAllByUser());
     }
 
     @Test
@@ -191,13 +179,10 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(7L, "john", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            Task updated = taskService.update(toUpdate);
-            assertEquals("new desc", updated.getDescription());
-            verify(taskRepository).save(existing);
-        }
+        authenticate(userSS);
+        Task updated = taskService.update(toUpdate);
+        assertEquals("new desc", updated.getDescription());
+        verify(taskRepository).save(existing);
     }
 
     @Test
@@ -218,10 +203,7 @@ public class TaskServiceTest {
         Set<ProfileEnum> profiles = new HashSet<>();
         profiles.add(ProfileEnum.USER);
         UserSpringSecurity userSS = new UserSpringSecurity(9L, "jane", "pass", profiles);
-
-        try (MockedStatic<UserService> mocked = mockStatic(UserService.class)) {
-            mocked.when(UserService::authenticated).thenReturn(userSS);
-            assertThrows(ObjectNotFoundException.class, () -> taskService.update(toUpdate));
-        }
+        authenticate(userSS);
+        assertThrows(ObjectNotFoundException.class, () -> taskService.update(toUpdate));
     }
 }
