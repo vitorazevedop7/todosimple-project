@@ -23,7 +23,6 @@ import com.vitorazevedo.todosimple.security.JWTAuthenticatorFilter;
 import com.vitorazevedo.todosimple.security.JWTAuthorizationFilter;
 import com.vitorazevedo.todosimple.security.JWTUtil;
 
-
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -38,11 +37,15 @@ public class SecurityConfig {
     private JWTUtil jwtUtil;
 
     private static final String[] PUBLIC_MATCHERS = {
-            "/"
+        "/",
+        "/v3/api-docs/**",
+        "/swagger-ui/**",
+        "/swagger-ui.html"
     };
+
     private static final String[] PUBLIC_MATCHERS_POST = {
-            "/user",
-            "/login"
+        "/user",
+        "/login"
     };
 
     @Bean
@@ -57,14 +60,14 @@ public class SecurityConfig {
         this.authenticationManager = authenticationManagerBuilder.build();
 
         http.authorizeRequests()
-                .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-                .antMatchers(PUBLIC_MATCHERS).permitAll()
-                .anyRequest().authenticated().and()
-                .authenticationManager(authenticationManager);
+            .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
+            .antMatchers(PUBLIC_MATCHERS).permitAll()
+            .anyRequest().authenticated()
+            .and()
+            .authenticationManager(authenticationManager);
 
         http.addFilter(new JWTAuthenticatorFilter(this.authenticationManager, this.jwtUtil));
-        http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil,
-                        this.userDetailsService));
+        http.addFilter(new JWTAuthorizationFilter(this.authenticationManager, this.jwtUtil, this.userDetailsService));
 
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
@@ -84,5 +87,4 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
