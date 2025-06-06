@@ -21,7 +21,7 @@ public class UserCreateDTO {
     private String username;
 
     @NotBlank
-    @Size(min = 8, max = 60)
+    @Size(min = 4, max = 60, message = "Password must contain at least 4 characters")
     @Schema(example = "mySecret123")
     private String password;
 

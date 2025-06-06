@@ -12,11 +12,15 @@ export default function RegisterPage() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (password.length < 4) {
+      alert("Password must contain at least 4 characters");
+      return;
+    }
     try {
       await api.post("/user", {
         username,
         password,
-        user_profile: "1", 
+        user_profile: "1",
       });
       alert("Usuário criado com sucesso!");
       router.push("/login");

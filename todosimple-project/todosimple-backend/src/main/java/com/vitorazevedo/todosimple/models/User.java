@@ -47,7 +47,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false, length = 60)
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 8, max = 60)
+    @Size(min = 4, max = 60, message = "Password must contain at least 4 characters")
     private String password;
 
 

@@ -15,7 +15,7 @@ public class UserUpdateDTO {
     private Long id;
 
     @NotBlank
-    @Size(min = 8, max = 60)
+    @Size(min = 4, max = 60, message = "Password must contain at least 4 characters")
     private String password;
 
 }
