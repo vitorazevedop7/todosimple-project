@@ -1,0 +1,30 @@
+version: "3.8"
+
+services:
+  mysqldb:
+    image: mysql:5.7
+    env_file: ./todosimple-backend/.env
+    ports:
+      - "${MYSQLDB_LOCAL_PORT:-3306}:${MYSQLDB_DOCKER_PORT:-3306}"
+    volumes:
+      - db-data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./todosimple-backend
+      dockerfile: Dockerfile
+    depends_on:
+      - mysqldb
+    env_file: ./todosimple-backend/.env
+    ports:
+      - "${SPRING_LOCAL_PORT:-8080}:${SPRING_DOCKER_PORT:-8080}"
+
+  frontend:
+    build: ./todosimple-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://backend:${SPRING_DOCKER_PORT:-8080}
+
+volumes:
+  db-data:
