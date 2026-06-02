@@ -68,6 +68,22 @@ public class UserService {
         }
     }
 
+    // CODE REVIEW [ARQUITETURA / DIP]: Método estático que acessa SecurityContextHolder diretamente.
+    // Problemas:
+    //   1. Métodos estáticos com estado global são difíceis de testar (não podem ser mockados facilmente).
+    //   2. Retornar null silenciosamente é um code smell clássico ("Returning Null" - Martin Fowler).
+    //   3. Viola o Princípio de Inversão de Dependência (DIP do SOLID).
+    // Sugestão: extrair para um componente Spring injetável:
+    //   @Component
+    //   public class SecurityContextHelper {
+    //       public UserSpringSecurity getAuthenticatedUser() {
+    //           Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    //           if (auth == null || !auth.isAuthenticated()) {
+    //               throw new AuthorizationException("Usuário não autenticado");
+    //           }
+    //           return (UserSpringSecurity) auth.getPrincipal();
+    //       }
+    //   }
     public static UserSpringSecurity authenticated() {
         try {
             return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

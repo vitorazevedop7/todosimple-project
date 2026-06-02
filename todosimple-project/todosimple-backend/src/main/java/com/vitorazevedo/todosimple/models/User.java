@@ -25,6 +25,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+// CODE REVIEW [BOAS PRÁTICAS]: A entidade não possui campos de auditoria (createdAt, updatedAt).
+// Sugestão: criar uma BaseEntity com @MappedSuperclass e @EntityListeners(AuditingEntityListener.class)
+// usando @CreatedDate e @LastModifiedDate, e habilitar @EnableJpaAuditing na aplicação.
+// CODE REVIEW [PADRÃO BUILDER]: Adicionar @Builder do Lombok facilita a criação de objetos
+// em testes e services, tornando o código mais legível e menos propenso a erros por posição de parâmetros.
 @Entity
 @Table(name = User.TABLE_NAME)
 @AllArgsConstructor
@@ -55,6 +60,16 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<Task> tasks = new ArrayList<Task>();
 
+    // CODE REVIEW [ARQUITETURA]: Roles armazenadas como Set<Integer> viola tipagem forte.
+    // Qualquer inteiro inválido pode ser inserido no banco sem erro em tempo de compilação.
+    // A conversão manual para ProfileEnum em getProfiles() é frágil e desnecessária.
+    // Sugestão: usar @Enumerated(EnumType.STRING) diretamente sobre Set<ProfileEnum>:
+    //   @ElementCollection(fetch = FetchType.EAGER)
+    //   @CollectionTable(name = "user_profile")
+    //   @Enumerated(EnumType.STRING)
+    //   @Column(name = "profile", nullable = false)
+    //   private Set<ProfileEnum> profiles = new HashSet<>();
+    // Isso eliminaria getProfiles() e addProfile() em suas formas atuais.
     @ElementCollection(fetch = FetchType.EAGER)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @CollectionTable(name = "user_profile")

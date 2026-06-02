@@ -15,6 +15,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 @RestController
 public class AuthController {
 
+    // CODE REVIEW [ARQUITETURA]: Este método nunca é executado em produção.
+    // O endpoint POST /login é interceptado pelo JWTAuthenticatorFilter antes de chegar
+    // ao controller. Um desenvolvedor novo lendo o código buscará a lógica de login aqui
+    // e não a encontrará, gerando confusão arquitetural.
+    // Sugestão: remover este controller e documentar diretamente no JWTAuthenticatorFilter
+    // ou no SecurityConfig que o login é gerenciado pelo filtro.
+    // Caso queira manter apenas para fins de documentação Swagger, adicionar comentário explícito.
     @PostMapping("/login")
     @Operation(
         summary = "Authenticate user",

@@ -33,6 +33,12 @@ public class UserSpringSecurity implements UserDetails {
 
 
 
+    // CODE REVIEW [CODE SMELL]: Todos os métodos de status de conta retornam true hardcoded.
+    // Isso impede qualquer mecanismo futuro de bloqueio, desativação ou expiração de contas.
+    // Sugestão: adicionar campo 'boolean active' à entidade User e usar aqui:
+    //   public boolean isEnabled() { return this.active; }
+    //   public boolean isAccountNonLocked() { return this.active; }
+    // Isso habilita funcionalidades como suspensão por admin, verificação de e-mail, etc.
     @Override
     public boolean isAccountNonExpired() {
         return true;

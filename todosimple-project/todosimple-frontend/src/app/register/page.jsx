@@ -13,6 +13,8 @@ export default function RegisterPage() {
   const handleRegister = async (e) => {
     e.preventDefault();
     if (password.length < 4) {
+      // CODE REVIEW [UX]: alert() bloqueante e não estilizável. Substituir por
+      // estado de erro renderizado inline no componente, ex.: setError("...").
       alert("Password must contain at least 4 characters");
       return;
     }
@@ -20,12 +22,20 @@ export default function RegisterPage() {
       await api.post("/user", {
         username,
         password,
+        // CODE REVIEW [BUG / SEGURANÇA]: O campo user_profile: "1" está sendo enviado
+        // ao criar usuário, mas a API usa o DTO UserCreateDTO que não possui este campo.
+        // O backend ignora esse valor, mas a intenção parece ser atribuir perfil ADMIN (código 1).
+        // O UserService já atribui USER (código 2) automaticamente — este campo é inócuo
+        // mas causa confusão. Remover para evitar ambiguidade.
         user_profile: "1",
       });
+      // CODE REVIEW [UX]: alert() para sucesso. Substituir por redirecionamento direto
+      // ou notificação inline/toast, pois o usuário já será redirecionado para /login.
       alert("Usuário criado com sucesso!");
       router.push("/login");
     } catch (error) {
       console.error("Erro ao criar usuário:", error);
+      // CODE REVIEW [UX]: alert() para erro. Substituir por feedback visual inline.
       alert("Erro ao criar usuário.");
     }
   };

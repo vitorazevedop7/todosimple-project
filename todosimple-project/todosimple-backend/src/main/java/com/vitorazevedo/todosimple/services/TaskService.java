@@ -31,7 +31,12 @@ public class TaskService {
                     "Tarefa não encontrada! Id: " + id + ", Tipo: " + Task.class.getName()));
 
         UserSpringSecurity userSpringSecurity = UserService.authenticated();
-        if (Objects.isNull(userSpringSecurity) 
+        // CODE REVIEW [SEGURANÇA]: Acesso negado lança ObjectNotFoundException (HTTP 404)
+        // ao invés de AuthorizationException (HTTP 403). Retornar 404 quando a tarefa
+        // existe mas o usuário não tem permissão é uma prática de segurança válida
+        // (evita enumeration attacks), porém deve ser intencional e documentado.
+        // Considerar usar AuthorizationException para manter consistência com UserService.
+        if (Objects.isNull(userSpringSecurity)
                 || !userSpringSecurity.hasRole(ProfileEnum.ADMIN) && !userHasTask(userSpringSecurity, task)) {
             throw new ObjectNotFoundException("Acesso negado");
         }
@@ -77,6 +82,13 @@ public class TaskService {
         }
     }
 
+    // CODE REVIEW [PERFORMANCE / REPOSITORY PATTERN]: Este método verifica propriedade
+    // carregando a Task completa do banco e comparando IDs em memória.
+    // Para apenas verificar se uma tarefa pertence a um usuário, uma query dedicada
+    // no repositório seria mais eficiente e expressiva:
+    //   boolean existsByIdAndUser_Id(Long taskId, Long userId);
+    // O Spring Data JPA deriva a query automaticamente pelo nome do método,
+    // gerando: SELECT COUNT(*) FROM task WHERE id=? AND user_id=?
     private Boolean userHasTask (UserSpringSecurity userSpringSecurity, Task task) {
         return task.getUser().getId().equals(userSpringSecurity.getId());
     }

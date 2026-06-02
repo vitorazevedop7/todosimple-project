@@ -16,6 +16,10 @@ export default function DashboardPage() {
   const [editingTask, setEditingTask] = useState(null);
   const timers = useRef({});
 
+  // CODE REVIEW [SEGURANÇA]: Proteção de rota baseada apenas em existência de token no localStorage.
+  // O token pode estar expirado ou ser inválido — apenas verificar sua existência não garante autenticação.
+  // Sugestão: verificar a expiração do JWT no cliente antes de confiar nele,
+  // ou tratar o erro 401 retornado pela API e redirecionar ao login nesse momento.
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
@@ -53,12 +57,23 @@ export default function DashboardPage() {
     }
   };
 
+  // CODE REVIEW [ARQUITETURA]: O estado "done" das tarefas é local e não persiste no banco.
+  // Ao recarregar a página, todas as tarefas voltam como não concluídas.
+  // Isso ocorre porque a entidade Task no backend não possui campo de status/completed.
+  // Sugestão: adicionar campo 'completed' na entidade Task e criar endpoint PATCH /task/{id}/status.
   const toggleDone = (task) => {
     const updatedTasks = tasks.map((t) =>
       t.id === task.id ? { ...t, done: !t.done } : t
     );
     setTasks(updatedTasks);
 
+    // CODE REVIEW [MEMORY LEAK]: Se o componente for desmontado antes do timeout disparar,
+    // o callback do setTimeout ainda executará, tentando atualizar estado de componente desmontado.
+    // O useRef já é usado corretamente aqui para guardar as referências dos timers.
+    // Sugestão: adicionar cleanup no useEffect para limpar todos os timers ao desmontar:
+    //   useEffect(() => {
+    //     return () => { Object.values(timers.current).forEach(clearTimeout); };
+    //   }, []);
     if (!task.done) {
       timers.current[task.id] = setTimeout(() => {
         handleDelete(task.id);
