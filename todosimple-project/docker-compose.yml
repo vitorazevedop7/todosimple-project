@@ -2,6 +2,12 @@ version: "3.8"
 
 services:
   mysqldb:
+    # CODE REVIEW [DEPENDÊNCIA DESATUALIZADA]: MySQL 5.7 chegou ao fim de suporte (EOL) em outubro/2023.
+    # Usar versões sem suporte representa risco de segurança pois vulnerabilidades descobertas
+    # não recebem mais correções oficiais.
+    # Sugestão: atualizar para mysql:8.0 ou mysql:8.4 (LTS).
+    # Atenção: MySQL 8 mudou o plugin de autenticação padrão (caching_sha2_password).
+    # Pode ser necessário adicionar: command: --default-authentication-plugin=mysql_native_password
     image: mysql:5.7
     restart: unless-stopped
     env_file: ./.env

@@ -11,6 +11,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfig implements WebMvcConfigurer{
 
     public void addCorsMappings(@NonNull CorsRegistry registry) {
+        // CODE REVIEW [SEGURANÇA]: allowedOrigins("*") permite requisições de qualquer domínio.
+        // Em produção isso abre a API para qualquer origem na internet.
+        // Sugestão: restringir por perfil usando @Value("${cors.allowed-origins}").
+        // Ex.: application-dev.properties -> cors.allowed-origins=http://localhost:3000
+        //      application-prod.properties -> cors.allowed-origins=${FRONTEND_URL}
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedHeaders("*")

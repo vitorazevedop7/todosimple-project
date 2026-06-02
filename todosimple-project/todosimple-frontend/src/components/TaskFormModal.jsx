@@ -20,11 +20,16 @@ export default function TaskFormModal({ isOpen, onClose, onSuccess, editingTask 
     try {
       const method = editingTask ? "put" : "post";
       const url = editingTask ? `/task/${editingTask.id}` : "/task";
+      // CODE REVIEW [VALIDAÇÃO]: Não há validação do campo description antes do envio.
+      // Uma descrição vazia passará para a API, que retornará HTTP 422.
+      // Sugestão: validar no cliente antes de submeter: if (!description.trim()) { setError("..."); return; }
       await api[method](url, { description });
       onSuccess();
       onClose();
     } catch (error) {
       console.error("Erro ao salvar tarefa:", error);
+      // CODE REVIEW [UX]: alert() bloqueante para erro de formulário. Substituir por
+      // mensagem de erro inline dentro do modal, que é a experiência esperada pelo usuário.
       alert("Erro ao salvar tarefa.");
     }
   };

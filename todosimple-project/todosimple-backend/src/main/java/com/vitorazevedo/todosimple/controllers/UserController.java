@@ -31,6 +31,12 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    // CODE REVIEW [ARQUITETURA / DTO]: Controller retorna a entidade User diretamente.
+    // Mesmo com @JsonProperty(WRITE_ONLY) na senha, expor entidades JPA na API é arriscado:
+    // campos internos podem vazar se novas propriedades forem adicionadas à entidade.
+    // Além disso, dificulta o versionamento da API.
+    // Sugestão: criar UserResponseDTO com apenas id e username:
+    //   public record UserResponseDTO(Long id, String username) {}
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable Long id) {
         User obj = this.userService.findById(id);
@@ -60,6 +66,12 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    // CODE REVIEW [FUNCIONALIDADE]: Ausência de endpoint de listagem para admins.
+    // O sistema define perfil ADMIN mas não possui endpoints exclusivos para essa role.
+    // Sugestão: adicionar GET /user paginado restrito a admins:
+    //   @GetMapping
+    //   @PreAuthorize("hasRole('ADMIN')")
+    //   public ResponseEntity<Page<UserResponseDTO>> findAll(@PageableDefault Pageable pageable) {...}
     @GetMapping("/me")
     public ResponseEntity<User> getLoggedUser() {
         UserSpringSecurity userSS = UserService.authenticated();

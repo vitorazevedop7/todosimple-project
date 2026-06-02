@@ -17,13 +17,21 @@ export default function LoginPage() {
       const token = response.headers["authorization"];
       if (token) {
         const cleanToken = token.replace("Bearer ", "");
+        // CODE REVIEW [SEGURANÇA]: JWT armazenado em localStorage é vulnerável a XSS.
+        // Qualquer script malicioso na página pode roubar o token via localStorage.getItem("token").
+        // Sugestão: usar cookies httpOnly + SameSite=Strict, que são inacessíveis via JavaScript.
         localStorage.setItem("token", `Bearer ${cleanToken}`);
         router.push("/dashboard");
       } else {
+        // CODE REVIEW [UX]: alert() nativo é bloqueante, não pode ser estilizado e
+        // oferece péssima experiência, especialmente em mobile.
+        // Sugestão: usar estado de erro no componente e renderizar inline, ou bibliotecas
+        // como react-hot-toast ou sonner para notificações não-bloqueantes.
         alert("Token não encontrado na resposta.");
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
+      // CODE REVIEW [UX]: Mesmo problema de alert() acima. Substituir por feedback visual inline.
       alert("Usuário ou senha inválidos.");
     }
   };

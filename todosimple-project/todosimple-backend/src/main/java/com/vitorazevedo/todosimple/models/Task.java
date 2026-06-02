@@ -15,6 +15,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
+// CODE REVIEW [BOAS PRÁTICAS]: Ausência de campos de auditoria (createdAt, updatedAt).
+// Sugestão: herdar de uma BaseEntity com @MappedSuperclass e Spring Data Auditing.
+// CODE REVIEW [PADRÃO BUILDER]: Adicionar @Builder para facilitar criação de objetos em testes.
 @Entity
 @Table(name = Task.TABLE_NAME)
 @AllArgsConstructor
@@ -37,5 +40,14 @@ public class Task {
     @Size(min = 1, max = 255)
     private String description;
 
-    
+    // CODE REVIEW [ARQUITETURA]: Campo de status ausente na entidade.
+    // O frontend exibe checkbox de "concluído" mas o estado não é persistido no banco.
+    // Ao recarregar a página, todas as tarefas voltam a aparecer como não concluídas.
+    // Sugestão: adicionar campo de status para persistir o estado real:
+    //   @Column(nullable = false)
+    //   private boolean completed = false;
+    // Ou com enum para maior flexibilidade:
+    //   @Enumerated(EnumType.STRING)
+    //   private TaskStatus status = TaskStatus.PENDING; // PENDING, IN_PROGRESS, DONE
+
 }

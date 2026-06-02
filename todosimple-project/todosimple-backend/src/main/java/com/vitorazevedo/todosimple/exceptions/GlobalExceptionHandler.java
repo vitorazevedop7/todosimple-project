@@ -166,6 +166,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler imple
             HttpStatus httpStatus,
             WebRequest request) {
         ErrorResponse errorResponse = new ErrorResponse(httpStatus.value(), message);
+        // CODE REVIEW [SEGURANÇA]: Stack trace completo exposto na resposta da API.
+        // Em produção, isso revela nomes de classes internas, versões de bibliotecas
+        // e estrutura do projeto para potenciais atacantes.
+        // O flag 'server.error.include-exception=true' está ativo em application.properties,
+        // o que significa que o stack trace é retornado em TODOS os ambientes.
+        // Sugestão: condicionar ao perfil ativo, ex.:
+        //   @Value("${spring.profiles.active:prod}") private String activeProfile;
+        //   if ("dev".equals(activeProfile)) { errorResponse.setStackTrace(...); }
         if (this.printStackTrace) {
             errorResponse.setStackTrace(ExceptionUtils.getStackTrace(exception));
         }

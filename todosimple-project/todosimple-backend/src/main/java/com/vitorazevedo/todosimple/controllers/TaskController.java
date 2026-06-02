@@ -35,6 +35,11 @@ public class TaskController {
     @Autowired
     private TaskService taskService;
 
+    // CODE REVIEW [ARQUITETURA / DTO]: O controller retorna a entidade JPA Task diretamente.
+    // Isso cria acoplamento entre a camada de persistência e a API REST.
+    // Mudanças na entidade alteram automaticamente a resposta da API sem intenção.
+    // O projeto já usa DTOs de entrada (UserCreateDTO) — aplicar o mesmo padrão na saída.
+    // Sugestão: criar TaskResponseDTO com apenas id e description.
     @GetMapping("/{id}")
     @Operation(summary = "Find task by id",
         security = @SecurityRequirement(name = "bearerAuth"),
@@ -44,6 +49,13 @@ public class TaskController {
         return ResponseEntity.ok(obj);
     }
 
+    // CODE REVIEW [ESCALABILIDADE]: Endpoint sem paginação retorna todos os registros de uma vez.
+    // Se um usuário tiver milhares de tarefas, toda a lista é carregada em memória e
+    // transmitida ao cliente, causando degradação de performance e alto consumo de memória.
+    // Sugestão: usar Pageable do Spring Data:
+    //   public ResponseEntity<Page<TaskProjection>> findAllByUser(
+    //       @PageableDefault(size = 20, sort = "id") Pageable pageable)
+    // No service e repositório: Page<TaskProjection> findByUser_Id(Long userId, Pageable pageable);
     @GetMapping("/user")
     @Operation(summary = "List tasks of logged user",
         security = @SecurityRequirement(name = "bearerAuth"),
